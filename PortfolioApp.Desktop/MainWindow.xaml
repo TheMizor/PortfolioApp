@@ -10,9 +10,14 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
             <Button x:Name="BtnImportBitstack" 
-                    Content="Importer un CSV Bitstack" 
-                    Padding="10,5" 
-                    Click="BtnImportBitstack_Click"/>
+            Content="Importer un CSV Bitstack" 
+            Padding="10,5" 
+            Margin="0,0,5,0"
+            Click="BtnImportBitstack_Click"/>
+            <Button x:Name="BtnImportBoursobank" 
+            Content="Importer un PDF Boursobank" 
+            Padding="10,5" 
+            Click="BtnImportBoursobank_Click"/>
         </StackPanel>
 
         <TextBox x:Name="TxtLog" 

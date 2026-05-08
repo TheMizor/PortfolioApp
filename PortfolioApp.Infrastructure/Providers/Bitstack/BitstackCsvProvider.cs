@@ -93,6 +93,7 @@ public class BitstackCsvProvider : IPositionProvider
         {
             Date = DateTime.SpecifyKind(row.Date, DateTimeKind.Utc),
             Type = TransactionType.Buy,
+            AccountType = AccountType.Bitstack,
             AssetSymbol = "BTC",
             AssetType = AssetType.Crypto,
             Quantity = row.AmountReceived.Value,
@@ -115,6 +116,7 @@ public class BitstackCsvProvider : IPositionProvider
         {
             Date = DateTime.SpecifyKind(row.Date, DateTimeKind.Utc),
             Type = TransactionType.Deposit,
+            AccountType = AccountType.Bitstack,
             AssetSymbol = "EUR",
             AssetType = AssetType.Cash,
             Quantity = row.AmountReceived.Value,
@@ -143,6 +145,7 @@ public class BitstackCsvProvider : IPositionProvider
             Date = DateTime.SpecifyKind(row.Date, DateTimeKind.Utc),
             Type = TransactionType.Withdrawal,
             AssetSymbol = symbol,
+            AccountType = AccountType.Bitstack,
             AssetType = symbol == "EUR" ? AssetType.Cash : AssetType.Crypto,
             Quantity = amount.Value,
             UnitPrice = row.PriceSent ?? (symbol == "EUR" ? 1m : 0m),

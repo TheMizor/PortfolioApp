@@ -23,6 +23,7 @@ public class ParsedTransaction
 {
     public DateTime Date { get; set; }
     public TransactionType Type { get; set; }
+    public AccountType AccountType { get; set; }
     public string AssetSymbol { get; set; } = string.Empty;   // "BTC", "EUR"
     public AssetType AssetType { get; set; }
     public decimal Quantity { get; set; }

@@ -45,3 +45,6 @@ appsettings.*.json
 *.bak
 Thumbs.db
 .DS_Store
+
+# Debug files
+*.debug.txt

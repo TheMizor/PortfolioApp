@@ -23,13 +23,12 @@ public class ImportService
     /// manquantes (Account, Asset) et persiste les transactions.
     /// </summary>
     public async Task<ImportSummary> ImportAsync(
-        IPositionProvider provider,
-        string filePath,
-        CancellationToken ct = default)
+    IPositionProvider provider,
+    string filePath,
+    CancellationToken ct = default)
     {
         var summary = new ImportSummary { SourceFile = Path.GetFileName(filePath) };
 
-        // 1. Parsing du fichier via le provider
         var parseResult = await provider.ImportAsync(filePath, ct);
         summary.Warnings.AddRange(parseResult.Warnings);
         summary.Errors.AddRange(parseResult.Errors);
@@ -37,18 +36,14 @@ public class ImportService
         if (parseResult.Errors.Any())
             return summary;
 
-        // 2. Récupération ou création du compte associé
-        var account = await GetOrCreateAccountAsync(provider.AccountType, ct);
-
-        // 3. Récupération des ExternalId déjà présents en base pour ce compte
-        //    => permet de filtrer les doublons en une seule requête.
+        // Récupérer tous les ExternalId existants pour les comptes concernés
+        // (déduplication globale, peu importe le compte exact)
         var incomingIds = parseResult.Transactions.Select(t => t.ExternalId).ToList();
         var existingIds = await _db.Transactions
-            .Where(t => t.AccountId == account.Id && incomingIds.Contains(t.ExternalId))
+            .Where(t => incomingIds.Contains(t.ExternalId))
             .Select(t => t.ExternalId)
             .ToHashSetAsync(ct);
 
-        // 4. Pour chaque transaction parsée non-dupliquée, on prépare l'entité
         foreach (var parsed in parseResult.Transactions)
         {
             if (existingIds.Contains(parsed.ExternalId))
@@ -57,6 +52,7 @@ public class ImportService
                 continue;
             }
 
+            var account = await GetOrCreateAccountAsync(parsed.AccountType, ct);
             var asset = await GetOrCreateAssetAsync(parsed.AssetSymbol, parsed.AssetType, ct);
 
             var tx = new Transaction
