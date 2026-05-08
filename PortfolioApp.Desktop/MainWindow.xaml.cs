@@ -4,6 +4,7 @@ using PortfolioApp.Infrastructure.Data;
 using PortfolioApp.Infrastructure.Providers.Bitstack;
 using PortfolioApp.Infrastructure.Providers.Boursobank;
 using PortfolioApp.Infrastructure.Services;
+using PortfolioApp.Core.Models;
 using System.IO;
 using System.Windows;
 
@@ -14,6 +15,39 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+    }
+
+    private async void BtnRefreshPositions_Click(object sender, RoutedEventArgs e)
+    {
+        BtnRefreshPositions.IsEnabled = false;
+
+        try
+        {
+            var options = new DbContextOptionsBuilder<PortfolioDbContext>()
+                .UseSqlite(DatabaseConfig.ConnectionString)
+                .Options;
+
+            using var db = new PortfolioDbContext(options);
+            await db.Database.MigrateAsync();
+
+            var service = new PositionService(db);
+            var positions = await service.GetCurrentPositionsAsync(
+                includeEmpty: ChkIncludeEmpty.IsChecked == true);
+
+            GridPositions.ItemsSource = positions;
+
+            TxtPositionsSummary.Text = positions.Count == 0
+                ? "Aucune position détenue actuellement."
+                : $"{positions.Count} position(s) — Coût total cumulé : {positions.Sum(p => p.TotalCost):N2} EUR";
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erreur : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            BtnRefreshPositions.IsEnabled = true;
+        }
     }
 
     private async void BtnImportBitstack_Click(object sender, RoutedEventArgs e)
@@ -71,6 +105,8 @@ public partial class MainWindow : Window
             var totalAssets = await db.Assets.CountAsync();
             Log($"\n--- État de la base ---");
             Log($"Comptes : {totalAccounts} | Actifs : {totalAssets} | Transactions : {totalTx}");
+            // Rafraîchir l'onglet Positions
+            BtnRefreshPositions_Click(sender, e);
         }
         catch (Exception ex)
         {
@@ -132,6 +168,8 @@ public partial class MainWindow : Window
             var totalAssets = await db.Assets.CountAsync();
             Log($"\n--- État de la base ---");
             Log($"Comptes : {totalAccounts} | Actifs : {totalAssets} | Transactions : {totalTx}");
+            // Rafraîchir l'onglet Positions
+            BtnRefreshPositions_Click(sender, e);
         }
         catch (Exception ex)
         {
