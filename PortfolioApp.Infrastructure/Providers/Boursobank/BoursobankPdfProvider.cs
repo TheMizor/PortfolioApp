@@ -126,17 +126,18 @@ public class BoursobankPdfProvider : IPositionProvider
         var unitPrice = ParseFrenchDecimal(coursMatch.Groups[1].Value);
 
         // 7. Les montants du tableau (brut, commission, [frais TTF], net)
-        // Stratégie : on cherche les valeurs EUR APRÈS le header du tableau.
-        // 4 valeurs si TTF présente (action française éligible) ; 3 si pas de TTF (ETF, action étrangère).
-        const string tableHeader = "Montant net au débit de votre compte";
-        var headerIdx = text.IndexOf(tableHeader, StringComparison.OrdinalIgnoreCase);
-        if (headerIdx < 0)
+        // Le label final varie : "au débit" pour un achat, "au crédit" pour une vente.
+        var headerMatch = Regex.Match(text,
+            @"Montant\s+net\s+au\s+(débit|crédit)\s+de\s+votre\s+compte",
+            RegexOptions.IgnoreCase);
+
+        if (!headerMatch.Success)
         {
             result.Errors.Add("Header du tableau de montants introuvable");
             return null;
         }
 
-        var tableContent = text.Substring(headerIdx + tableHeader.Length);
+        var tableContent = text.Substring(headerMatch.Index + headerMatch.Length);
         var amounts = Regex.Matches(tableContent, @"([\d\s\u00A0]+(?:[,\.]\d+)?)\s*EUR")
             .Select(m => ParseFrenchDecimal(m.Groups[1].Value))
             .Take(4)
@@ -146,7 +147,6 @@ public class BoursobankPdfProvider : IPositionProvider
 
         if (amounts.Count == 4)
         {
-            // Avec TTF française (action d'émetteur français éligible)
             brut = amounts[0];
             commission = amounts[1];
             fraisTtf = amounts[2];
@@ -154,7 +154,6 @@ public class BoursobankPdfProvider : IPositionProvider
         }
         else if (amounts.Count == 3)
         {
-            // Sans TTF (ETF, action étrangère, etc.)
             brut = amounts[0];
             commission = amounts[1];
             fraisTtf = 0m;
@@ -169,11 +168,15 @@ public class BoursobankPdfProvider : IPositionProvider
         // 8. Calcul de la quantité
         var quantity = Math.Round(brut / unitPrice, 8);
 
-        // 9. Vérification de cohérence
-        var expected = brut + commission + fraisTtf;
+        // 9. Vérification de cohérence (différente selon achat ou vente)
+        var totalFees = commission + fraisTtf;
+        var expected = txType == TransactionType.Buy
+            ? brut + totalFees    // Achat : net = brut + frais (tu payes plus)
+            : brut - totalFees;   // Vente : net = brut - frais (tu reçois moins)
+
         if (Math.Abs(expected - net) > 0.05m)
         {
-            result.Warnings.Add($"Incohérence montants : brut+frais ({expected:F2}) ≠ net ({net:F2})");
+            result.Warnings.Add($"Incohérence montants : attendu {expected:F2}, net {net:F2}");
         }
 
         // 10. Nom du titre (best-effort, pour RawData uniquement)
