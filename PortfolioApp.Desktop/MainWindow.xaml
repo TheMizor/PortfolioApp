@@ -17,14 +17,20 @@
 
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                     <Button x:Name="BtnImportBitstack" 
-                            Content="Importer un CSV Bitstack" 
-                            Padding="10,5" 
-                            Margin="0,0,5,0"
-                            Click="BtnImportBitstack_Click"/>
+                    Content="Importer un CSV Bitstack" 
+                    Padding="10,5" 
+                    Margin="0,0,5,0"
+                    Click="BtnImportBitstack_Click"/>
                     <Button x:Name="BtnImportBoursobank" 
-                            Content="Importer un PDF Boursobank" 
-                            Padding="10,5" 
-                            Click="BtnImportBoursobank_Click"/>
+                    Content="Importer un PDF Boursobank" 
+                    Padding="10,5"
+                    Margin="0,0,5,0"
+                    Click="BtnImportBoursobank_Click"/>
+                    <Button x:Name="BtnManualEntry" 
+                    Content="Saisie manuelle" 
+                    Padding="10,5" 
+                    Background="#E8F4FD"
+                    Click="BtnManualEntry_Click"/>
                 </StackPanel>
 
                 <TextBox x:Name="TxtLog" 
@@ -128,6 +134,81 @@
                            Margin="0,10,0,0"
                            FontStyle="Italic"
                            Foreground="#555"/>
+            </Grid>
+        </TabItem>
+
+        <!-- Onglet Transactions -->
+        <TabItem Header="Transactions">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                    <Button x:Name="BtnRefreshTransactions" 
+                    Content="Rafraîchir" 
+                    Padding="10,5"
+                    Margin="0,0,10,0"
+                    Click="BtnRefreshTransactions_Click"/>
+                    <Button x:Name="BtnEditTransaction" 
+                    Content="Modifier la sélection" 
+                    Padding="10,5"
+                    Margin="0,0,5,0"
+                    Click="BtnEditTransaction_Click"/>
+                    <Button x:Name="BtnDeleteTransaction" 
+                    Content="Supprimer la sélection" 
+                    Padding="10,5"
+                    Background="#FFE0E0"
+                    Click="BtnDeleteTransaction_Click"/>
+                </StackPanel>
+
+                <DataGrid x:Name="GridTransactions" 
+                  Grid.Row="1"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  GridLinesVisibility="Horizontal"
+                  AlternatingRowBackground="#F5F5F5"
+                  HeadersVisibility="Column"
+                  CanUserSortColumns="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Date" 
+                                    Binding="{Binding Date, StringFormat=yyyy-MM-dd}" 
+                                    Width="100"/>
+                        <DataGridTextColumn Header="Compte" 
+                                    Binding="{Binding Account.Name}" 
+                                    Width="120"/>
+                        <DataGridTextColumn Header="Type" 
+                                    Binding="{Binding Type}" 
+                                    Width="90"/>
+                        <DataGridTextColumn Header="Actif" 
+                                    Binding="{Binding Asset.Symbol}" 
+                                    Width="160"/>
+                        <DataGridTextColumn Header="Quantité" 
+                                    Binding="{Binding Quantity, StringFormat=N8}" 
+                                    Width="120"/>
+                        <DataGridTextColumn Header="Prix unit." 
+                                    Binding="{Binding UnitPrice, StringFormat=N4}" 
+                                    Width="100"/>
+                        <DataGridTextColumn Header="Frais" 
+                                    Binding="{Binding Fees, StringFormat=N2}" 
+                                    Width="70"/>
+                        <DataGridTextColumn Header="Source" 
+                                    Binding="{Binding SourceFile}" 
+                                    Width="200"/>
+                        <DataGridTextColumn Header="Note" 
+                                    Binding="{Binding RawData}" 
+                                    Width="200"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <TextBlock x:Name="TxtTransactionsSummary" 
+                   Grid.Row="2"
+                   Margin="0,10,0,0"
+                   FontStyle="Italic"
+                   Foreground="#555"/>
             </Grid>
         </TabItem>
 

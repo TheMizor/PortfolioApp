@@ -7,6 +7,7 @@ using PortfolioApp.Infrastructure.Services;
 using PortfolioApp.Core.Models;
 using System.IO;
 using System.Windows;
+using PortfolioApp.Core.Entities;
 
 namespace PortfolioApp.Desktop;
 
@@ -15,6 +16,122 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+    }
+
+    private async void BtnRefreshTransactions_Click(object sender, RoutedEventArgs e)
+    {
+        BtnRefreshTransactions.IsEnabled = false;
+
+        try
+        {
+            var options = new DbContextOptionsBuilder<PortfolioDbContext>()
+                .UseSqlite(DatabaseConfig.ConnectionString)
+                .Options;
+
+            using var db = new PortfolioDbContext(options);
+            await db.Database.MigrateAsync();
+
+            var transactions = await db.Transactions
+                .Include(t => t.Account)
+                .Include(t => t.Asset)
+                .OrderByDescending(t => t.Date)
+                .ToListAsync();
+
+            GridTransactions.ItemsSource = transactions;
+
+            TxtTransactionsSummary.Text = $"{transactions.Count} transaction(s) au total";
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erreur : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            BtnRefreshTransactions.IsEnabled = true;
+        }
+    }
+
+    private void BtnEditTransaction_Click(object sender, RoutedEventArgs e)
+    {
+        if (GridTransactions.SelectedItem is not Transaction selected)
+        {
+            MessageBox.Show("Sélectionnez une transaction à modifier.", "Aucune sélection",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var window = new ManualTransactionWindow(selected) { Owner = this };
+        var result = window.ShowDialog();
+
+        if (result == true && window.TransactionSaved)
+        {
+            // Rafraîchit les vues qui peuvent avoir changé
+            BtnRefreshTransactions_Click(sender, e);
+            BtnRefreshPositions_Click(sender, e);
+        }
+    }
+
+    private async void BtnDeleteTransaction_Click(object sender, RoutedEventArgs e)
+    {
+        if (GridTransactions.SelectedItem is not Transaction selected)
+        {
+            MessageBox.Show("Sélectionnez une transaction à supprimer.", "Aucune sélection",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var confirm = MessageBox.Show(
+            $"Supprimer définitivement cette transaction ?\n\n" +
+            $"Date : {selected.Date:yyyy-MM-dd}\n" +
+            $"Type : {selected.Type}\n" +
+            $"Actif : {selected.Asset.Symbol}\n" +
+            $"Quantité : {selected.Quantity}",
+            "Confirmation",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+
+        if (confirm != MessageBoxResult.Yes) return;
+
+        try
+        {
+            var options = new DbContextOptionsBuilder<PortfolioDbContext>()
+                .UseSqlite(DatabaseConfig.ConnectionString)
+                .Options;
+
+            using var db = new PortfolioDbContext(options);
+            await db.Database.MigrateAsync();
+
+            var toDelete = await db.Transactions.FirstOrDefaultAsync(t => t.Id == selected.Id);
+            if (toDelete != null)
+            {
+                db.Transactions.Remove(toDelete);
+                await db.SaveChangesAsync();
+            }
+
+            BtnRefreshTransactions_Click(sender, e);
+            BtnRefreshPositions_Click(sender, e);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erreur : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void BtnManualEntry_Click(object sender, RoutedEventArgs e)
+    {
+        var window = new ManualTransactionWindow
+        {
+            Owner = this
+        };
+
+        var result = window.ShowDialog();
+
+        if (result == true && window.TransactionSaved)
+        {
+            Log($"=== Saisie manuelle enregistrée ===");
+            // Rafraîchir la vue Positions
+            BtnRefreshPositions_Click(sender, e);
+        }
     }
 
     private async void BtnRefreshPositions_Click(object sender, RoutedEventArgs e)

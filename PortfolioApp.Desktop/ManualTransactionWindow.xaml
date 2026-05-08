@@ -1,0 +1,134 @@
+﻿<Window x:Class="PortfolioApp.Desktop.ManualTransactionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Saisie manuelle d'une transaction" 
+        Height="500" Width="500"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Date -->
+        <TextBlock Grid.Row="0" Grid.Column="0" 
+                   Text="Date :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <DatePicker Grid.Row="0" Grid.Column="1" 
+                    x:Name="DpDate" 
+                    Margin="0,5"/>
+
+        <!-- Compte -->
+        <TextBlock Grid.Row="1" Grid.Column="0" 
+                   Text="Compte :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <ComboBox Grid.Row="1" Grid.Column="1" 
+                  x:Name="CbAccount" 
+                  Margin="0,5"/>
+
+        <!-- Type de transaction -->
+        <TextBlock Grid.Row="2" Grid.Column="0" 
+                   Text="Type :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <ComboBox Grid.Row="2" Grid.Column="1" 
+                  x:Name="CbTransactionType" 
+                  Margin="0,5"/>
+
+        <!-- Symbole de l'actif -->
+        <TextBlock Grid.Row="3" Grid.Column="0" 
+                   Text="Symbole / ISIN :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <TextBox Grid.Row="3" Grid.Column="1" 
+                 x:Name="TxtSymbol" 
+                 Margin="0,5"
+                 ToolTip="Ex: BTC, ETH, FR0000120073"/>
+
+        <!-- Type d'actif -->
+        <TextBlock Grid.Row="4" Grid.Column="0" 
+                   Text="Type d'actif :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <ComboBox Grid.Row="4" Grid.Column="1" 
+                  x:Name="CbAssetType" 
+                  Margin="0,5"/>
+
+        <!-- Quantité -->
+        <TextBlock Grid.Row="5" Grid.Column="0" 
+                   Text="Quantité :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <TextBox Grid.Row="5" Grid.Column="1" 
+                 x:Name="TxtQuantity" 
+                 Margin="0,5"
+                 ToolTip="Décimal avec . ou , (ex: 0.5 ou 0,5)"/>
+
+        <!-- Prix unitaire -->
+        <TextBlock Grid.Row="6" Grid.Column="0" 
+                   Text="Prix unitaire (EUR) :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <TextBox Grid.Row="6" Grid.Column="1" 
+                 x:Name="TxtUnitPrice" 
+                 Margin="0,5"/>
+
+        <!-- Frais -->
+        <TextBlock Grid.Row="7" Grid.Column="0" 
+                   Text="Frais (EUR) :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <TextBox Grid.Row="7" Grid.Column="1" 
+                 x:Name="TxtFees" 
+                 Text="0"
+                 Margin="0,5"/>
+
+        <!-- Note libre -->
+        <TextBlock Grid.Row="8" Grid.Column="0" 
+                   Text="Note (optionnel) :" 
+                   VerticalAlignment="Top" Margin="0,5"/>
+        <TextBox Grid.Row="8" Grid.Column="1" 
+                 x:Name="TxtNote" 
+                 Margin="0,5"
+                 Height="60"
+                 TextWrapping="Wrap"
+                 AcceptsReturn="True"
+                 VerticalScrollBarVisibility="Auto"/>
+
+        <!-- Aperçu calculé -->
+        <Border Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" 
+                Background="#F0F0F0" 
+                Padding="10" 
+                Margin="0,15,0,0">
+            <TextBlock x:Name="TxtPreview" 
+                       FontFamily="Consolas" 
+                       FontSize="12"/>
+        </Border>
+
+        <!-- Boutons -->
+        <StackPanel Grid.Row="10" Grid.ColumnSpan="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    Margin="0,15,0,0">
+            <Button x:Name="BtnCancel" 
+                    Content="Annuler" 
+                    Width="100" 
+                    Margin="0,0,10,0"
+                    Click="BtnCancel_Click"/>
+            <Button x:Name="BtnSave" 
+                    Content="Enregistrer" 
+                    Width="100" 
+                    IsDefault="True"
+                    Click="BtnSave_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
