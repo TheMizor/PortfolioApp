@@ -11,7 +11,7 @@ public class PortfolioDbContextFactory : IDesignTimeDbContextFactory<PortfolioDb
     public PortfolioDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<PortfolioDbContext>();
-        optionsBuilder.UseSqlite("Data Source=portfolio.db");
+        optionsBuilder.UseSqlite(DatabaseConfig.ConnectionString);
 
         return new PortfolioDbContext(optionsBuilder.Options);
     }

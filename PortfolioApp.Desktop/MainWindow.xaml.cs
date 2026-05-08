@@ -34,7 +34,7 @@ public partial class MainWindow : Window
         {
             // Configuration du DbContext
             var options = new DbContextOptionsBuilder<PortfolioDbContext>()
-                .UseSqlite("Data Source=portfolio.db")
+                .UseSqlite(DatabaseConfig.ConnectionString)
                 .Options;
 
             using var db = new PortfolioDbContext(options);
@@ -100,7 +100,7 @@ public partial class MainWindow : Window
         try
         {
             var options = new DbContextOptionsBuilder<PortfolioDbContext>()
-                .UseSqlite("Data Source=portfolio.db")
+                .UseSqlite(DatabaseConfig.ConnectionString)
                 .Options;
 
             using var db = new PortfolioDbContext(options);
