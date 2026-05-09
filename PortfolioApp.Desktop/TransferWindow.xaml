@@ -1,0 +1,130 @@
+﻿<Window x:Class="PortfolioApp.Desktop.TransferWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Transférer un actif entre comptes" 
+        Height="450" Width="500"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="160"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Date -->
+        <TextBlock Grid.Row="0" Grid.Column="0" 
+                   Text="Date du transfert :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <DatePicker Grid.Row="0" Grid.Column="1" 
+                    x:Name="DpDate" 
+                    Margin="0,5"/>
+
+        <!-- Compte source -->
+        <TextBlock Grid.Row="1" Grid.Column="0" 
+                   Text="Compte source :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <ComboBox Grid.Row="1" Grid.Column="1" 
+                  x:Name="CbAccountSource" 
+                  Margin="0,5"
+                  SelectionChanged="CbAccountSource_SelectionChanged"/>
+
+        <!-- Actif à transférer -->
+        <TextBlock Grid.Row="2" Grid.Column="0" 
+                   Text="Actif à transférer :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <ComboBox Grid.Row="2" Grid.Column="1" 
+                  x:Name="CbAsset" 
+                  Margin="0,5"
+                  DisplayMemberPath="Display"
+                  SelectionChanged="CbAsset_SelectionChanged"/>
+
+        <!-- Position actuelle (info) -->
+        <TextBlock Grid.Row="3" Grid.Column="0" 
+                   Text="Position disponible :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <TextBlock Grid.Row="3" Grid.Column="1" 
+                   x:Name="TxtAvailable"
+                   VerticalAlignment="Center" Margin="0,5"
+                   FontWeight="Bold"/>
+
+        <!-- Compte destination -->
+        <TextBlock Grid.Row="4" Grid.Column="0" 
+                   Text="Compte destination :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <ComboBox Grid.Row="4" Grid.Column="1" 
+                  x:Name="CbAccountDest" 
+                  Margin="0,5"/>
+
+        <!-- Quantité à transférer -->
+        <TextBlock Grid.Row="5" Grid.Column="0" 
+                   Text="Quantité à transférer :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <Grid Grid.Row="5" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" 
+                     x:Name="TxtQuantity" 
+                     Margin="0,5,5,5"/>
+            <Button Grid.Column="1" 
+                    Content="Tout" 
+                    Padding="10,5"
+                    Margin="0,5"
+                    Click="BtnTransferAll_Click"
+                    ToolTip="Transférer la totalité de la position"/>
+        </Grid>
+
+        <!-- Note -->
+        <TextBlock Grid.Row="6" Grid.Column="0" 
+                   Text="Note (optionnel) :" 
+                   VerticalAlignment="Top" Margin="0,5"/>
+        <TextBox Grid.Row="6" Grid.Column="1" 
+                 x:Name="TxtNote" 
+                 Margin="0,5"
+                 Height="50"
+                 TextWrapping="Wrap"
+                 AcceptsReturn="True"/>
+
+        <!-- Aperçu -->
+        <Border Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" 
+                Background="#F0F0F0" 
+                Padding="10" 
+                Margin="0,15,0,0"
+                VerticalAlignment="Top">
+            <TextBlock x:Name="TxtPreview" 
+                       FontFamily="Consolas" 
+                       FontSize="12"
+                       TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- Boutons -->
+        <StackPanel Grid.Row="8" Grid.ColumnSpan="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    Margin="0,15,0,0">
+            <Button x:Name="BtnCancel" 
+                    Content="Annuler" 
+                    Width="100" 
+                    Margin="0,0,10,0"
+                    Click="BtnCancel_Click"/>
+            <Button x:Name="BtnSave" 
+                    Content="Transférer" 
+                    Width="100" 
+                    IsDefault="True"
+                    Click="BtnSave_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

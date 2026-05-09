@@ -18,6 +18,20 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
+    private void BtnTransfer_Click(object sender, RoutedEventArgs e)
+    {
+        var window = new TransferWindow { Owner = this };
+        var result = window.ShowDialog();
+
+        if (result == true && window.TransferSaved)
+        {
+            Log($"=== Transfert enregistré ===");
+            BtnRefreshPositions_Click(sender, e);
+            if (GridTransactions.Items.Count > 0)
+                BtnRefreshTransactions_Click(sender, e);
+        }
+    }
+
     private async void BtnRefreshTransactions_Click(object sender, RoutedEventArgs e)
     {
         BtnRefreshTransactions.IsEnabled = false;

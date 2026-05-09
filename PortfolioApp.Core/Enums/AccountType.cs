@@ -9,5 +9,6 @@ public enum AccountType
     Bitstack,
     BoursobankPEA,
     BoursobankCTO,
-    Bybit
+    Bybit,
+    Ledger
 }

@@ -31,6 +31,12 @@
                     Padding="10,5" 
                     Background="#E8F4FD"
                     Click="BtnManualEntry_Click"/>
+                    <Button x:Name="BtnTransfer" 
+                    Content="Transfert entre comptes" 
+                    Padding="10,5" 
+                    Margin="5,0,0,0"
+                    Background="#FFF8E1"
+                    Click="BtnTransfer_Click"/>
                 </StackPanel>
 
                 <TextBox x:Name="TxtLog" 
