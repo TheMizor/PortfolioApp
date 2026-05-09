@@ -106,9 +106,35 @@ public class BitstackCsvProvider : IPositionProvider
 
     private ParsedTransaction? MapDeposit(BitstackCsvRow row, ImportResult result)
     {
-        if (row.CurrencyReceived != "EUR" || !row.AmountReceived.HasValue)
+        if (string.IsNullOrEmpty(row.CurrencyReceived) || !row.AmountReceived.HasValue)
         {
-            result.Warnings.Add($"Dépôt non-EUR ou sans montant (id={row.ExternalId})");
+            result.Warnings.Add($"Dépôt sans monnaie ou sans montant (id={row.ExternalId})");
+            return null;
+        }
+
+        // Cas 1 : Dépôt en EUR (versement classique)
+        if (row.CurrencyReceived == "EUR")
+        {
+            return new ParsedTransaction
+            {
+                Date = DateTime.SpecifyKind(row.Date, DateTimeKind.Utc),
+                Type = TransactionType.Deposit,
+                AccountType = AccountType.Bitstack,
+                AssetSymbol = "EUR",
+                AssetType = AssetType.Cash,
+                Quantity = row.AmountReceived.Value,
+                UnitPrice = 1m,
+                Fees = row.Fees ?? 0m,
+                ExternalId = row.ExternalId,
+                RawData = row.Description
+            };
+        }
+
+        // Cas 2 : Dépôt en crypto (cadeaux, récompenses, transferts entrants)
+        // Le prix d'acquisition est le prix marché à la date du dépôt
+        if (!row.PriceReceived.HasValue)
+        {
+            result.Warnings.Add($"Dépôt crypto sans prix de référence (id={row.ExternalId})");
             return null;
         }
 
@@ -117,20 +143,18 @@ public class BitstackCsvProvider : IPositionProvider
             Date = DateTime.SpecifyKind(row.Date, DateTimeKind.Utc),
             Type = TransactionType.Deposit,
             AccountType = AccountType.Bitstack,
-            AssetSymbol = "EUR",
-            AssetType = AssetType.Cash,
+            AssetSymbol = row.CurrencyReceived,
+            AssetType = AssetType.Crypto,
             Quantity = row.AmountReceived.Value,
-            UnitPrice = 1m,        // 1 EUR = 1 EUR
+            UnitPrice = row.PriceReceived.Value,    // prix marché à la date
             Fees = row.Fees ?? 0m,
             ExternalId = row.ExternalId,
-            RawData = row.Description
+            RawData = $"{row.Description} (dépôt crypto)"
         };
     }
 
     private ParsedTransaction? MapWithdrawal(BitstackCsvRow row, ImportResult result)
     {
-        // Pas encore d'exemple dans tes données mais on anticipe.
-        // Un retrait peut être soit en EUR (sortie cash), soit en BTC (envoi vers wallet externe).
         var symbol = row.CurrencySent;
         var amount = row.AmountSent;
 
@@ -140,16 +164,38 @@ public class BitstackCsvProvider : IPositionProvider
             return null;
         }
 
+        // Conversion des frais en EUR si nécessaire
+        decimal feesInEur = 0m;
+        if (row.Fees.HasValue && row.Fees.Value > 0)
+        {
+            if (row.FeesCurrency == "EUR")
+            {
+                feesInEur = row.Fees.Value;
+            }
+            else if (row.FeesCurrency == symbol && row.PriceSent.HasValue)
+            {
+                // Frais en crypto : on les convertit avec le prix de référence du retrait
+                feesInEur = Math.Round(row.Fees.Value * row.PriceSent.Value, 2);
+            }
+            else
+            {
+                result.Warnings.Add($"Devise des frais non gérée pour retrait (id={row.ExternalId})");
+            }
+        }
+
+        // Prix unitaire : pour un retrait crypto, on utilise le prix de référence Bitstack
+        var unitPrice = symbol == "EUR" ? 1m : (row.PriceSent ?? 0m);
+
         return new ParsedTransaction
         {
             Date = DateTime.SpecifyKind(row.Date, DateTimeKind.Utc),
             Type = TransactionType.Withdrawal,
-            AssetSymbol = symbol,
             AccountType = AccountType.Bitstack,
+            AssetSymbol = symbol,
             AssetType = symbol == "EUR" ? AssetType.Cash : AssetType.Crypto,
             Quantity = amount.Value,
-            UnitPrice = row.PriceSent ?? (symbol == "EUR" ? 1m : 0m),
-            Fees = row.Fees ?? 0m,
+            UnitPrice = unitPrice,
+            Fees = feesInEur,
             ExternalId = row.ExternalId,
             RawData = row.Description
         };

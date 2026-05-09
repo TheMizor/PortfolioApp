@@ -36,6 +36,9 @@ public class ImportService
         if (parseResult.Errors.Any())
             return summary;
 
+        // Génère les Deposits Ledger pour les retraits crypto (transferts cold storage)
+        parseResult.Transactions = AddLedgerMirrorTransactions(parseResult.Transactions);
+
         // Récupérer tous les ExternalId existants pour les comptes concernés
         // (déduplication globale, peu importe le compte exact)
         var incomingIds = parseResult.Transactions.Select(t => t.ExternalId).ToList();
@@ -110,6 +113,39 @@ public class ImportService
         }
 
         return asset;
+    }
+
+    /// <summary>
+    /// Pour chaque retrait crypto, génère automatiquement un Deposit en miroir 
+    /// sur le compte Ledger (hypothèse : retraits crypto → cold storage).
+    /// L'utilisateur peut éditer la transaction si la destination était autre.
+    /// </summary>
+    private static List<ParsedTransaction> AddLedgerMirrorTransactions(List<ParsedTransaction> source)
+    {
+        var result = new List<ParsedTransaction>(source);
+
+        foreach (var tx in source)
+        {
+            // On ne miroir que les retraits crypto (pas les EUR)
+            if (tx.Type != TransactionType.Withdrawal) continue;
+            if (tx.AssetType != AssetType.Crypto) continue;
+
+            result.Add(new ParsedTransaction
+            {
+                Date = tx.Date,
+                Type = TransactionType.Deposit,
+                AccountType = AccountType.Ledger,
+                AssetSymbol = tx.AssetSymbol,
+                AssetType = tx.AssetType,
+                Quantity = tx.Quantity,
+                UnitPrice = tx.UnitPrice,
+                Fees = 0m,
+                ExternalId = $"{tx.ExternalId}-LEDGER",
+                RawData = $"Reception sur Ledger (depuis Bitstack, à éditer si destination différente)"
+            });
+        }
+
+        return result;
     }
 }
 
