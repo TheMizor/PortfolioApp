@@ -13,9 +13,21 @@ namespace PortfolioApp.Desktop;
 
 public partial class MainWindow : Window
 {
+    private bool _isRefreshing = false;
     public MainWindow()
     {
         InitializeComponent();
+    }
+
+    private void ShowLoading(string message)
+    {
+        TxtLoadingMessage.Text = message;
+        LoadingOverlay.Visibility = Visibility.Visible;
+    }
+
+    private void HideLoading()
+    {
+        LoadingOverlay.Visibility = Visibility.Collapsed;
     }
 
     private async void BtnScanFolder_Click(object sender, RoutedEventArgs e)
@@ -23,6 +35,7 @@ public partial class MainWindow : Window
         const string rootPath = @"C:\Users\simon\Documents\fiscalité";
 
         BtnScanFolder.IsEnabled = false;
+        ShowLoading("Scan du dossier en cours...");
         Log($"=== Scan du dossier : {rootPath} ===");
 
         try
@@ -96,6 +109,7 @@ public partial class MainWindow : Window
         finally
         {
             BtnScanFolder.IsEnabled = true;
+            HideLoading();
         }
     }
 
@@ -116,6 +130,7 @@ public partial class MainWindow : Window
     private async void BtnRefreshTransactions_Click(object sender, RoutedEventArgs e)
     {
         BtnRefreshTransactions.IsEnabled = false;
+        ShowLoading("Chargement des transactions...");
 
         try
         {
@@ -143,6 +158,7 @@ public partial class MainWindow : Window
         finally
         {
             BtnRefreshTransactions.IsEnabled = true;
+            HideLoading();
         }
     }
 
@@ -187,6 +203,8 @@ public partial class MainWindow : Window
 
         if (confirm != MessageBoxResult.Yes) return;
 
+        ShowLoading("Suppression en cours...");
+
         try
         {
             var options = new DbContextOptionsBuilder<PortfolioDbContext>()
@@ -210,6 +228,10 @@ public partial class MainWindow : Window
         {
             MessageBox.Show($"Erreur : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+        finally
+        {
+            HideLoading();
+        }
     }
 
     private void BtnManualEntry_Click(object sender, RoutedEventArgs e)
@@ -231,7 +253,10 @@ public partial class MainWindow : Window
 
     private async void BtnRefreshPositions_Click(object sender, RoutedEventArgs e)
     {
+        if (_isRefreshing) return;
+        _isRefreshing = true;
         BtnRefreshPositions.IsEnabled = false;
+        ShowLoading("Calcul des positions...");
 
         try
         {
@@ -258,7 +283,9 @@ public partial class MainWindow : Window
         }
         finally
         {
+            _isRefreshing = false;
             BtnRefreshPositions.IsEnabled = true;
+            HideLoading();
         }
     }
 
@@ -274,6 +301,7 @@ public partial class MainWindow : Window
             return;
 
         BtnImportBitstack.IsEnabled = false;
+        ShowLoading("Import CSV Bitstack...");
         Log($"=== Import démarré : {dialog.FileName} ===");
 
         try
@@ -328,6 +356,7 @@ public partial class MainWindow : Window
         finally
         {
             BtnImportBitstack.IsEnabled = true;
+            HideLoading();
         }
     }
 
@@ -343,6 +372,7 @@ public partial class MainWindow : Window
             return;
 
         BtnImportBoursobank.IsEnabled = false;
+        ShowLoading("Import PDF Boursobank...");
         Log($"=== Import démarré : {dialog.FileName} ===");
 
         try
@@ -391,6 +421,7 @@ public partial class MainWindow : Window
         finally
         {
             BtnImportBoursobank.IsEnabled = true;
+            HideLoading();
         }
     }
 

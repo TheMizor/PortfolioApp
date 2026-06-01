@@ -4,8 +4,8 @@
         Title="Portfolio - Agrégateur de positions" 
         Height="700" Width="1100"
         WindowStartupLocation="CenterScreen">
-
-    <TabControl>
+    <Grid>
+        <TabControl>
 
         <!-- Onglet Imports -->
         <TabItem Header="Imports">
@@ -226,4 +226,28 @@
         </TabItem>
 
     </TabControl>
+        <!-- Overlay de chargement (caché par défaut) -->
+        <Grid x:Name="LoadingOverlay" 
+          Background="#80000000" 
+          Visibility="Collapsed"
+          Panel.ZIndex="1000">
+            <Border Background="White" 
+                CornerRadius="8"
+                Padding="40,30"
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center"
+                MinWidth="300">
+                <StackPanel HorizontalAlignment="Center">
+                    <ProgressBar IsIndeterminate="True" 
+                             Height="6" 
+                             Width="250"
+                             Margin="0,0,0,15"/>
+                    <TextBlock x:Name="TxtLoadingMessage" 
+                           Text="Chargement..." 
+                           FontSize="14"
+                           HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
 </Window>
