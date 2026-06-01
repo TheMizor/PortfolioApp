@@ -18,6 +18,87 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
+    private async void BtnScanFolder_Click(object sender, RoutedEventArgs e)
+    {
+        const string rootPath = @"C:\Users\simon\Documents\fiscalité";
+
+        BtnScanFolder.IsEnabled = false;
+        Log($"=== Scan du dossier : {rootPath} ===");
+
+        try
+        {
+            var options = new DbContextOptionsBuilder<PortfolioDbContext>()
+                .UseSqlite(DatabaseConfig.ConnectionString)
+                .Options;
+
+            using var db = new PortfolioDbContext(options);
+            await db.Database.MigrateAsync();
+
+            var importService = new ImportService(db);
+            var scanService = new FolderScanService(importService);
+
+            var result = await scanService.ScanAndImportAsync(rootPath);
+
+            // Détail par fichier
+            Log("\n--- Détail par fichier ---");
+            foreach (var fr in result.FileResults.OrderBy(f => f.Source).ThenBy(f => f.FileName))
+            {
+                var status = fr.Imported > 0
+                    ? $"✓ {fr.Imported} nouvelle(s)"
+                    : fr.WasParsed
+                    ? "= rien de nouveau"
+                    : "⊘ format non reconnu";
+
+                var details = fr.Duplicates > 0 ? $" (déjà importé: {fr.Duplicates})" : "";
+                var warnings = fr.WarningCount > 0 ? $" ⚠ {fr.WarningCount} warning(s)" : "";
+
+                Log($"[{fr.Source}] {fr.FileName}: {status}{details}{warnings}");
+            }
+
+            // Récap global
+            Log($"\n=== Résumé ===");
+            Log($"Fichiers traités : {result.FilesProcessed}");
+            Log($"Fichiers avec nouvelles données : {result.FilesWithNewData}");
+            Log($"Total nouvelles transactions : {result.TotalImported}");
+            Log($"Total doublons ignorés : {result.TotalDuplicates}");
+
+            if (result.Errors.Any())
+            {
+                Log($"\n⚠ Erreurs ({result.Errors.Count}) :");
+                foreach (var err in result.Errors)
+                    Log($"  - {err}");
+            }
+
+            // État de la base
+            var totalTx = await db.Transactions.CountAsync();
+            var totalAccounts = await db.Accounts.CountAsync();
+            var totalAssets = await db.Assets.CountAsync();
+            Log($"\n--- État de la base ---");
+            Log($"Comptes : {totalAccounts} | Actifs : {totalAssets} | Transactions : {totalTx}");
+
+            if (result.IgnoredFolders.Any())
+            {
+                Log($"\n--- Dossiers ignorés (pas de provider) ---");
+                foreach (var folder in result.IgnoredFolders)
+                    Log($"  - {folder}");
+            }
+
+            // Rafraîchir les vues
+            BtnRefreshPositions_Click(sender, e);
+            if (GridTransactions.Items.Count > 0)
+                BtnRefreshTransactions_Click(sender, e);
+        }
+        catch (Exception ex)
+        {
+            Log($"EXCEPTION : {ex.Message}");
+            Log(ex.StackTrace ?? "");
+        }
+        finally
+        {
+            BtnScanFolder.IsEnabled = true;
+        }
+    }
+
     private void BtnTransfer_Click(object sender, RoutedEventArgs e)
     {
         var window = new TransferWindow { Owner = this };
