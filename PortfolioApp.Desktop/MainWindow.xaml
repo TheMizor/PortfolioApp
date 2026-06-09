@@ -23,6 +23,12 @@
                     Background="#D4EDDA"
                     FontWeight="Bold"
                     Click="BtnScanFolder_Click"/>
+                    <Button x:Name="BtnChangeScanFolder" 
+                    Content="📁" 
+                    Padding="8,5"
+                    Margin="0,0,15,0"
+                    ToolTip="Changer le dossier à scanner"
+                    Click="BtnChangeScanFolder_Click"/>
                     <Button x:Name="BtnImportBitstack" 
                     Content="Importer un CSV Bitstack" 
                     Padding="10,5" 

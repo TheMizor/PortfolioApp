@@ -30,9 +30,57 @@ public partial class MainWindow : Window
         LoadingOverlay.Visibility = Visibility.Collapsed;
     }
 
+    private void BtnChangeScanFolder_Click(object sender, RoutedEventArgs e)
+    {
+        var settings = UserSettings.Load();
+
+        var dialog = new OpenFolderDialog
+        {
+            Title = "Sélectionner le nouveau dossier à scanner",
+            InitialDirectory = settings.LastScanFolder ?? @"C:\Users\simon\Documents"
+        };
+
+        if (dialog.ShowDialog() != true)
+            return;
+
+        settings.LastScanFolder = dialog.FolderName;
+        settings.Save();
+
+        MessageBox.Show($"Dossier mémorisé :\n{dialog.FolderName}",
+            "Configuration enregistrée",
+            MessageBoxButton.OK,
+            MessageBoxImage.Information);
+    }
+
     private async void BtnScanFolder_Click(object sender, RoutedEventArgs e)
     {
-        const string rootPath = @"C:\Users\simon\Documents\fiscalité";
+        // Charger les settings utilisateur
+        var settings = UserSettings.Load();
+        string rootPath;
+
+        // Si on a déjà un dossier mémorisé ET qu'il existe encore, on l'utilise directement
+        if (!string.IsNullOrEmpty(settings.LastScanFolder) && Directory.Exists(settings.LastScanFolder))
+        {
+            rootPath = settings.LastScanFolder;
+        }
+        else
+        {
+            // Sinon, on demande à l'utilisateur de sélectionner un dossier
+            var dialog = new OpenFolderDialog
+            {
+                Title = "Sélectionner le dossier à scanner",
+                InitialDirectory = @"C:\Users\simon\Documents"
+            };
+
+            if (dialog.ShowDialog() != true)
+                return;
+
+            rootPath = dialog.FolderName;
+
+            // Mémoriser pour la prochaine fois
+            settings.LastScanFolder = rootPath;
+            settings.Save();
+        }
 
         BtnScanFolder.IsEnabled = false;
         ShowLoading("Scan du dossier en cours...");
