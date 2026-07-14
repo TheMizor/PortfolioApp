@@ -115,19 +115,7 @@ public class BitstackCsvProvider : IPositionProvider
         // Cas 1 : Dépôt en EUR (versement classique)
         if (row.CurrencyReceived == "EUR")
         {
-            return new ParsedTransaction
-            {
-                Date = DateTime.SpecifyKind(row.Date, DateTimeKind.Utc),
-                Type = TransactionType.Deposit,
-                AccountType = AccountType.Bitstack,
-                AssetSymbol = "EUR",
-                AssetType = AssetType.Cash,
-                Quantity = row.AmountReceived.Value,
-                UnitPrice = 1m,
-                Fees = row.Fees ?? 0m,
-                ExternalId = row.ExternalId,
-                RawData = row.Description
-            };
+            return null;
         }
 
         // Cas 2 : Dépôt en crypto (cadeaux, récompenses, transferts entrants)
@@ -161,6 +149,11 @@ public class BitstackCsvProvider : IPositionProvider
         if (string.IsNullOrEmpty(symbol) || !amount.HasValue)
         {
             result.Warnings.Add($"Retrait sans montant ou monnaie (id={row.ExternalId})");
+            return null;
+        }
+
+        if (symbol == "EUR")
+        {
             return null;
         }
 
