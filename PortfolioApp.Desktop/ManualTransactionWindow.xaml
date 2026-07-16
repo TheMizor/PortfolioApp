@@ -2,12 +2,13 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Saisie manuelle d'une transaction" 
-        Height="500" Width="500"
+        Height="580" Width="500"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -104,8 +105,17 @@
                  AcceptsReturn="True"
                  VerticalScrollBarVisibility="Auto"/>
 
-        <!-- Aperçu calculé -->
-        <Border Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" 
+        <!-- Niveau de confiance (NOUVEAU) -->
+        <TextBlock Grid.Row="9" Grid.Column="0" 
+                   Text="Fiabilité de la saisie :" 
+                   VerticalAlignment="Center" Margin="0,5"/>
+        <ComboBox Grid.Row="9" Grid.Column="1" 
+                  x:Name="CbConfidence" 
+                  Margin="0,5"
+                  ToolTip="Documented = avec justificatif ; Estimated = PRU estimé, non traçable"/>
+
+        <!-- Aperçu calculé (décalé à la ligne 10) -->
+        <Border Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" 
                 Background="#F0F0F0" 
                 Padding="10" 
                 Margin="0,15,0,0">
@@ -114,8 +124,8 @@
                        FontSize="12"/>
         </Border>
 
-        <!-- Boutons -->
-        <StackPanel Grid.Row="10" Grid.ColumnSpan="2" 
+        <!-- Boutons (décalés à la ligne 11) -->
+        <StackPanel Grid.Row="11" Grid.ColumnSpan="2" 
                     Orientation="Horizontal" 
                     HorizontalAlignment="Right" 
                     Margin="0,15,0,0">

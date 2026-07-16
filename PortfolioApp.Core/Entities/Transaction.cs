@@ -16,6 +16,7 @@ public class Transaction
     public string SourceFile { get; set; } = string.Empty;
     public string ExternalId { get; set; } = string.Empty;
     public string? RawData { get; set; }
+    public TransactionConfidence Confidence { get; set; } = TransactionConfidence.Documented;
 
     // Foreign keys
     public Guid AccountId { get; set; }

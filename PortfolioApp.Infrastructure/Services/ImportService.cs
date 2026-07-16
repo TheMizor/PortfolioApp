@@ -6,6 +6,7 @@ using PortfolioApp.Core.Entities;
 using PortfolioApp.Core.Enums;
 using PortfolioApp.Core.Interfaces;
 using PortfolioApp.Infrastructure.Data;
+using PortfolioApp.Core.Enums;
 
 namespace PortfolioApp.Infrastructure.Services;
 
@@ -68,6 +69,7 @@ public class ImportService
                 ExternalId = parsed.ExternalId,
                 SourceFile = parseResult.SourceFile,
                 RawData = parsed.RawData,
+                Confidence = TransactionConfidence.Verified,
                 AccountId = account.Id,
                 AssetId = asset.Id
             };

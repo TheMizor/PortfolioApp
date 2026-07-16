@@ -7,82 +7,82 @@
     <Grid>
         <TabControl>
 
-        <!-- Onglet Imports -->
-        <TabItem Header="Imports">
-            <Grid Margin="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+            <!-- Onglet Imports -->
+            <TabItem Header="Imports">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                    <Button x:Name="BtnScanFolder" 
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <Button x:Name="BtnScanFolder" 
                     Content="🔄 Tout importer (dossier fiscalité)" 
                     Padding="10,5" 
                     Margin="0,0,15,0"
                     Background="#D4EDDA"
                     FontWeight="Bold"
                     Click="BtnScanFolder_Click"/>
-                    <Button x:Name="BtnChangeScanFolder" 
+                        <Button x:Name="BtnChangeScanFolder" 
                     Content="📁" 
                     Padding="8,5"
                     Margin="0,0,15,0"
                     ToolTip="Changer le dossier à scanner"
                     Click="BtnChangeScanFolder_Click"/>
-                    <Button x:Name="BtnImportBitstack" 
+                        <Button x:Name="BtnImportBitstack" 
                     Content="Importer un CSV Bitstack" 
                     Padding="10,5" 
                     Margin="0,0,5,0"
                     Click="BtnImportBitstack_Click"/>
-                    <Button x:Name="BtnImportBoursobank" 
+                        <Button x:Name="BtnImportBoursobank" 
                     Content="Importer un PDF Boursobank" 
                     Padding="10,5"
                     Margin="0,0,5,0"
                     Click="BtnImportBoursobank_Click"/>
-                    <Button x:Name="BtnManualEntry" 
+                        <Button x:Name="BtnManualEntry" 
                     Content="Saisie manuelle" 
                     Padding="10,5" 
                     Background="#E8F4FD"
                     Click="BtnManualEntry_Click"/>
-                    <Button x:Name="BtnTransfer" 
+                        <Button x:Name="BtnTransfer" 
                     Content="Transfert entre comptes" 
                     Padding="10,5" 
                     Margin="5,0,0,0"
                     Background="#FFF8E1"
                     Click="BtnTransfer_Click"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <TextBox x:Name="TxtLog" 
+                    <TextBox x:Name="TxtLog" 
                          Grid.Row="1" 
                          IsReadOnly="True" 
                          VerticalScrollBarVisibility="Auto"
                          FontFamily="Consolas"
                          FontSize="12"/>
-            </Grid>
-        </TabItem>
+                </Grid>
+            </TabItem>
 
-        <!-- Onglet Positions -->
-        <TabItem Header="Positions" x:Name="TabPositions">
-            <Grid Margin="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <!-- Onglet Positions -->
+            <TabItem Header="Positions" x:Name="TabPositions">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                    <Button x:Name="BtnRefreshPositions" 
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <Button x:Name="BtnRefreshPositions" 
                             Content="Rafraîchir" 
                             Padding="10,5"
                             Margin="0,0,10,0"
                             Click="BtnRefreshPositions_Click"/>
-                    <CheckBox x:Name="ChkIncludeEmpty" 
+                        <CheckBox x:Name="ChkIncludeEmpty" 
                               Content="Inclure positions soldées (qty = 0)" 
                               VerticalAlignment="Center"
                               Click="BtnRefreshPositions_Click"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <DataGrid x:Name="GridPositions" 
+                    <DataGrid x:Name="GridPositions" 
                           Grid.Row="1"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
@@ -90,100 +90,100 @@
                           AlternatingRowBackground="#F5F5F5"
                           HeadersVisibility="Column"
                           CanUserSortColumns="True">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Compte" 
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Compte" 
                                             Binding="{Binding AccountName}" 
                                             Width="120"/>
-                        <DataGridTextColumn Header="Symbole" 
+                            <DataGridTextColumn Header="Symbole" 
                                             Binding="{Binding AssetSymbol}" 
                                             Width="160"/>
-                        <DataGridTextColumn Header="Type" 
+                            <DataGridTextColumn Header="Type" 
                                             Binding="{Binding AssetType}" 
                                             Width="80"/>
-                        <DataGridTextColumn Header="Quantité" 
+                            <DataGridTextColumn Header="Quantité" 
                                             Binding="{Binding QuantityFormatted}" 
                                             Width="140">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="PRU" 
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="PRU" 
                                             Binding="{Binding AveragePriceFormatted}" 
                                             Width="120">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="Coût total" 
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Coût total" 
                                             Binding="{Binding TotalCostFormatted}" 
                                             Width="120">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="Frais cumulés" 
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Frais cumulés" 
                                             Binding="{Binding TotalFeesFormatted}" 
                                             Width="100">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="Nb tx" 
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Nb tx" 
                                             Binding="{Binding TransactionCount}" 
                                             Width="60">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
 
-                <TextBlock x:Name="TxtPositionsSummary" 
+                    <TextBlock x:Name="TxtPositionsSummary" 
                            Grid.Row="2"
                            Margin="0,10,0,0"
                            FontStyle="Italic"
                            Foreground="#555"/>
-            </Grid>
-        </TabItem>
+                </Grid>
+            </TabItem>
 
-        <!-- Onglet Transactions -->
-        <TabItem Header="Transactions">
-            <Grid Margin="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <!-- Onglet Transactions -->
+            <TabItem Header="Transactions">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                    <Button x:Name="BtnRefreshTransactions" 
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <Button x:Name="BtnRefreshTransactions" 
                     Content="Rafraîchir" 
                     Padding="10,5"
                     Margin="0,0,10,0"
                     Click="BtnRefreshTransactions_Click"/>
-                    <Button x:Name="BtnEditTransaction" 
+                        <Button x:Name="BtnEditTransaction" 
                     Content="Modifier la sélection" 
                     Padding="10,5"
                     Margin="0,0,5,0"
                     Click="BtnEditTransaction_Click"/>
-                    <Button x:Name="BtnDeleteTransaction" 
+                        <Button x:Name="BtnDeleteTransaction" 
                     Content="Supprimer la sélection" 
                     Padding="10,5"
                     Background="#FFE0E0"
                     Click="BtnDeleteTransaction_Click"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <DataGrid x:Name="GridTransactions" 
+                    <DataGrid x:Name="GridTransactions" 
                   Grid.Row="1"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
@@ -192,46 +192,49 @@
                   AlternatingRowBackground="#F5F5F5"
                   HeadersVisibility="Column"
                   CanUserSortColumns="True">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Date" 
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Date" 
                                     Binding="{Binding Date, StringFormat=yyyy-MM-dd}" 
                                     Width="100"/>
-                        <DataGridTextColumn Header="Compte" 
+                            <DataGridTextColumn Header="Compte" 
                                     Binding="{Binding Account.Name}" 
                                     Width="120"/>
-                        <DataGridTextColumn Header="Type" 
+                            <DataGridTextColumn Header="Type" 
                                     Binding="{Binding Type}" 
                                     Width="90"/>
-                        <DataGridTextColumn Header="Actif" 
+                            <DataGridTextColumn Header="Fiabilité" 
+                                    Binding="{Binding Confidence}" 
+                                    Width="90"/>
+                            <DataGridTextColumn Header="Actif" 
                                     Binding="{Binding Asset.Symbol}" 
                                     Width="160"/>
-                        <DataGridTextColumn Header="Quantité" 
+                            <DataGridTextColumn Header="Quantité" 
                                     Binding="{Binding Quantity, StringFormat=N8}" 
                                     Width="120"/>
-                        <DataGridTextColumn Header="Prix unit." 
+                            <DataGridTextColumn Header="Prix unit." 
                                     Binding="{Binding UnitPrice, StringFormat=N4}" 
                                     Width="100"/>
-                        <DataGridTextColumn Header="Frais" 
+                            <DataGridTextColumn Header="Frais" 
                                     Binding="{Binding Fees, StringFormat=N2}" 
                                     Width="70"/>
-                        <DataGridTextColumn Header="Source" 
+                            <DataGridTextColumn Header="Source" 
                                     Binding="{Binding SourceFile}" 
                                     Width="200"/>
-                        <DataGridTextColumn Header="Note" 
+                            <DataGridTextColumn Header="Note" 
                                     Binding="{Binding RawData}" 
                                     Width="200"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+                        </DataGrid.Columns>
+                    </DataGrid>
 
-                <TextBlock x:Name="TxtTransactionsSummary" 
+                    <TextBlock x:Name="TxtTransactionsSummary" 
                    Grid.Row="2"
                    Margin="0,10,0,0"
                    FontStyle="Italic"
                    Foreground="#555"/>
-            </Grid>
-        </TabItem>
+                </Grid>
+            </TabItem>
 
-    </TabControl>
+        </TabControl>
         <!-- Overlay de chargement (caché par défaut) -->
         <Grid x:Name="LoadingOverlay" 
           Background="#80000000" 

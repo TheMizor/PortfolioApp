@@ -39,6 +39,7 @@ public partial class ManualTransactionWindow : Window
         BtnSave.Content = "Mettre à jour";
 
         // Pré-remplir les champs
+        CbConfidence.SelectedItem = existing.Confidence;
         DpDate.SelectedDate = existing.Date;
         CbAccount.SelectedItem = existing.Account.Type;
         CbTransactionType.SelectedItem = existing.Type;
@@ -73,6 +74,15 @@ public partial class ManualTransactionWindow : Window
         // Types d'actif
         CbAssetType.ItemsSource = Enum.GetValues<AssetType>();
         CbAssetType.SelectedItem = AssetType.Crypto;
+
+        // Niveau de confiance : par défaut Documented pour la saisie manuelle
+        CbConfidence.ItemsSource = new[]
+        {
+            TransactionConfidence.Documented,
+            TransactionConfidence.Estimated 
+            // On ne propose PAS Verified : c'est réservé aux imports automatiques
+        };
+        CbConfidence.SelectedItem = TransactionConfidence.Documented;
 
         UpdatePreview();
     }
@@ -217,6 +227,7 @@ public partial class ManualTransactionWindow : Window
                 existing.UnitPrice = unitPrice;
                 existing.Fees = fees;
                 existing.RawData = note;
+                existing.Confidence = (TransactionConfidence)CbConfidence.SelectedItem;
                 existing.AccountId = account.Id;
                 existing.AssetId = asset.Id;
                 // On ne change PAS l'ExternalId ni le SourceFile : ils gardent l'origine
@@ -235,6 +246,7 @@ public partial class ManualTransactionWindow : Window
                     ExternalId = externalId,
                     SourceFile = "manual entry",
                     RawData = note,
+                    Confidence = (TransactionConfidence)CbConfidence.SelectedItem,
                     AccountId = account.Id,
                     AssetId = asset.Id
                 };
