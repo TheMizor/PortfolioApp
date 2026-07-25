@@ -18,6 +18,9 @@ public class Transaction
     public string? RawData { get; set; }
     public TransactionConfidence Confidence { get; set; } = TransactionConfidence.Documented;
 
+    // Contrepartie de l'opération : "EUR", "USDT"... null si sans objet (dépôt, transfert)
+    public string? CounterAssetSymbol { get; set; }
+
     // Foreign keys
     public Guid AccountId { get; set; }
     public Guid AssetId { get; set; }

@@ -31,4 +31,7 @@ public class ParsedTransaction
     public decimal Fees { get; set; }
     public string ExternalId { get; set; } = string.Empty;
     public string? RawData { get; set; }
+
+    // Contrepartie de l'opération : "EUR", "USDT"... null si sans objet
+    public string? CounterAssetSymbol { get; set; }
 }

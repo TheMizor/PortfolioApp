@@ -38,6 +38,11 @@ public partial class ManualTransactionWindow : Window
         Title = "Modifier une transaction";
         BtnSave.Content = "Mettre à jour";
 
+        // Une transaction importée est Verified : on élargit la liste pour pouvoir
+        // l'afficher et la conserver, sinon la sélection serait vide.
+        if (existing.Confidence == TransactionConfidence.Verified)
+            CbConfidence.ItemsSource = Enum.GetValues<TransactionConfidence>();
+
         // Pré-remplir les champs
         CbConfidence.SelectedItem = existing.Confidence;
         DpDate.SelectedDate = existing.Date;
@@ -49,6 +54,7 @@ public partial class ManualTransactionWindow : Window
         TxtUnitPrice.Text = existing.UnitPrice.ToString(CultureInfo.InvariantCulture);
         TxtFees.Text = existing.Fees.ToString(CultureInfo.InvariantCulture);
         TxtNote.Text = existing.RawData ?? string.Empty;
+        TxtCounterAsset.Text = existing.CounterAssetSymbol ?? string.Empty;
     }
 
     private void SetupPreviewListeners()
@@ -210,6 +216,16 @@ public partial class ManualTransactionWindow : Window
             var date = DateTime.SpecifyKind(DpDate.SelectedDate!.Value, DateTimeKind.Utc);
             var note = string.IsNullOrWhiteSpace(TxtNote.Text) ? null : TxtNote.Text.Trim();
 
+            // Contrepartie : vide = sans objet (dépôt, transfert)
+            var counterAsset = string.IsNullOrWhiteSpace(TxtCounterAsset.Text)
+                ? null
+                : TxtCounterAsset.Text.Trim().ToUpper();
+
+            // Lecture défensive : si la sélection est vide, on retombe sur Documented
+            var confidence = CbConfidence.SelectedItem is TransactionConfidence c
+                ? c
+                : TransactionConfidence.Documented;
+
             if (_editingTransactionId.HasValue)
             {
                 // Mode édition : on met à jour la transaction existante
@@ -227,7 +243,8 @@ public partial class ManualTransactionWindow : Window
                 existing.UnitPrice = unitPrice;
                 existing.Fees = fees;
                 existing.RawData = note;
-                existing.Confidence = (TransactionConfidence)CbConfidence.SelectedItem;
+                existing.Confidence = confidence;
+                existing.CounterAssetSymbol = counterAsset;
                 existing.AccountId = account.Id;
                 existing.AssetId = asset.Id;
                 // On ne change PAS l'ExternalId ni le SourceFile : ils gardent l'origine
@@ -246,7 +263,8 @@ public partial class ManualTransactionWindow : Window
                     ExternalId = externalId,
                     SourceFile = "manual entry",
                     RawData = note,
-                    Confidence = (TransactionConfidence)CbConfidence.SelectedItem,
+                    Confidence = confidence,
+                    CounterAssetSymbol = counterAsset,
                     AccountId = account.Id,
                     AssetId = asset.Id
                 };

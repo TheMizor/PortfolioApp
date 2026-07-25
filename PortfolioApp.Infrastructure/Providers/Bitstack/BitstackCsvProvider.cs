@@ -100,6 +100,7 @@ public class BitstackCsvProvider : IPositionProvider
             UnitPrice = row.PriceReceived.Value,
             Fees = row.Fees ?? 0m,
             ExternalId = row.ExternalId,
+            CounterAssetSymbol = "EUR",
             RawData = row.Description
         };
     }

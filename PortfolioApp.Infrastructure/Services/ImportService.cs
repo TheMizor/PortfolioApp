@@ -6,7 +6,6 @@ using PortfolioApp.Core.Entities;
 using PortfolioApp.Core.Enums;
 using PortfolioApp.Core.Interfaces;
 using PortfolioApp.Infrastructure.Data;
-using PortfolioApp.Core.Enums;
 
 namespace PortfolioApp.Infrastructure.Services;
 
@@ -24,9 +23,9 @@ public class ImportService
     /// manquantes (Account, Asset) et persiste les transactions.
     /// </summary>
     public async Task<ImportSummary> ImportAsync(
-    IPositionProvider provider,
-    string filePath,
-    CancellationToken ct = default)
+        IPositionProvider provider,
+        string filePath,
+        CancellationToken ct = default)
     {
         var summary = new ImportSummary { SourceFile = Path.GetFileName(filePath) };
 
@@ -70,6 +69,7 @@ public class ImportService
                 SourceFile = parseResult.SourceFile,
                 RawData = parsed.RawData,
                 Confidence = TransactionConfidence.Verified,
+                CounterAssetSymbol = parsed.CounterAssetSymbol,
                 AccountId = account.Id,
                 AssetId = asset.Id
             };
@@ -121,6 +121,7 @@ public class ImportService
     /// Pour chaque retrait crypto, génère automatiquement un Deposit en miroir 
     /// sur le compte Ledger (hypothèse : retraits crypto → cold storage).
     /// L'utilisateur peut éditer la transaction si la destination était autre.
+    /// Un transfert n'a pas de contrepartie : CounterAssetSymbol reste null.
     /// </summary>
     private static List<ParsedTransaction> AddLedgerMirrorTransactions(List<ParsedTransaction> source)
     {

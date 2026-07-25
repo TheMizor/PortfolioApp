@@ -194,6 +194,7 @@ public class BoursobankPdfProvider : IPositionProvider
             UnitPrice = unitPrice,
             Fees = commission + fraisTtf,
             ExternalId = externalId,
+            CounterAssetSymbol = "EUR",
             RawData = $"{name} | ISIN: {isin}"
         };
     }
