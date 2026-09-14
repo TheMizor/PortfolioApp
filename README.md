@@ -273,7 +273,6 @@ Environ trente secondes par mois.
 
 - **Projet orphelin** : `PortfolioApp/PortfolioApp.csproj` cible .NET Framework 4.7.2,
   vestige de l'assistant Visual Studio. Hors solution, inutilisé, à supprimer.
-- **Chemin de base en dur** dans `DatabaseConfig` — bloque tout usage sur une autre machine.
 - **`PriceQuote` mort** : table créée, jamais utilisée.
 - **Tout en code-behind**, pas de MVVM ni d'injection de dépendances. Le `DbContext`
   est instancié à la main dans chaque handler. Acceptable à cette taille, pénible au-delà.
