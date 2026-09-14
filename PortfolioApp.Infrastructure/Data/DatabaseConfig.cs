@@ -10,7 +10,8 @@ public static class DatabaseConfig
     {
         get
         {
-            var fiscaliteRoot = @"C:\Users\simon\Documents\fiscalité";
+            var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var fiscaliteRoot = Path.Combine(documents, "fiscalité");
             var appFolder = Path.Combine(fiscaliteRoot, "_portfolio_app");
             Directory.CreateDirectory(appFolder);
             return Path.Combine(appFolder, "portfolio.db");

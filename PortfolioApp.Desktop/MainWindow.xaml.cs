@@ -14,6 +14,8 @@ namespace PortfolioApp.Desktop;
 public partial class MainWindow : Window
 {
     private bool _isRefreshing = false;
+    private static string DefaultDocumentsFolder =>
+    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
     public MainWindow()
     {
         InitializeComponent();
@@ -37,7 +39,7 @@ public partial class MainWindow : Window
         var dialog = new OpenFolderDialog
         {
             Title = "Sélectionner le nouveau dossier à scanner",
-            InitialDirectory = settings.LastScanFolder ?? @"C:\Users\simon\Documents"
+            InitialDirectory = settings.LastScanFolder ?? DefaultDocumentsFolder
         };
 
         if (dialog.ShowDialog() != true)
@@ -69,7 +71,7 @@ public partial class MainWindow : Window
             var dialog = new OpenFolderDialog
             {
                 Title = "Sélectionner le dossier à scanner",
-                InitialDirectory = @"C:\Users\simon\Documents"
+                InitialDirectory = settings.LastScanFolder ?? DefaultDocumentsFolder
             };
 
             if (dialog.ShowDialog() != true)
